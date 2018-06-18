@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %} 首页 {% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static',filename = 'css/index.css') }}">
+    <script type="text/javascript">
+    </script>
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <blockquote>
+                    <p>
+                        我们应该注意到，没有一个受过伦理教育的软件工程师会同意开发出“摧毁巴格达”的程序。
+                        然而基本的职业道德却可以要求他们开发出“摧毁城市”的程序，巴格达只是这个程序的一个参数。
+                    </p>
+                    <small>Nathaniel S.Borenstein <cite></cite></small>
+                </blockquote>
+            </div>
+        </div>
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+
+                <div class="row clearfix">
+                    <div class="col-md-1 column">
+                    </div>
+                    <div class="col-md-10 column">
+                        {% if notes %}
+                            {% for note in notes %}
+                                <div class="list-group">
+                                    <div class="list-group-item">
+                                        <h3 class="list-group-item-heading">
+                                            <a href="{{ url_for('detail',note_id=note.id) }}"> {{ note.title }}</a>
+                                        </h3>
+                                        <p class="list-group-item-text">
+                                         标签：
+                                            {% for tag in note.tags %}
+                                                <span class="note-tag label label-primary"> {{ tag.text }}</span>
+                                            {% endfor %}
+                                            <span class="create-time"> {{ note.create_time }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            无笔记
+                        {% endif %}
+                    </div>
+                    <div class="col-md-1 column">
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

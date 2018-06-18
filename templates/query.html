@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %} 查询 {% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static',filename = 'css/query.css') }}">
+    <script type="text/javascript">
+    </script>
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column query-div">
+                <h4 class="query-title">{{ condition }}</h4>
+            </div>
+        </div>
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+
+                <div class="row clearfix">
+                    <div class="col-md-1 column">
+                    </div>
+                    <div class="col-md-10 column">
+                        {% if notes %}
+                            {% for note in notes %}
+                                <div class="list-group">
+                                    <div class="list-group-item">
+                                        <h3 class="list-group-item-heading">
+                                            <a href="{{ url_for('detail',note_id=note.id) }}"> {{ note.title }}</a>
+                                        </h3>
+                                        <p class="list-group-item-text">
+                                         标签：
+                                            {% for tag in note.tags %}
+                                                <span class="note-tag label label-primary"> {{ tag.text }}</span>
+                                            {% endfor %}
+                                            <span class="create-time"> {{ note.create_time }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            无笔记
+                        {% endif %}
+                    </div>
+                    <div class="col-md-1 column">
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

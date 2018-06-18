@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %} 录入 {% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static',filename = 'css/note.css') }}">
+    <!-- 引入summernote css和js -->
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css" rel="stylesheet">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
+    <!-- 配置语言必须引入其对应的js (中国大陆summernote-zh-CN.js) -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/lang/summernote-zh-CN.js"></script>
+    <!-- 初始化 自定义配置summernote js -->
+    <script type="text/javascript">
+        //加载编辑器及自定义配置
+        $(document).ready(function () {
+            $('#summernote').summernote({
+                height: 400,//初始化默认高度
+                minHeight: null, //最小高度
+                maxHeight: null, //最大高度
+                focus: true,//是否定位
+                lang: 'zh-CN',//注意这里，若要设置语言，则需要引入该语言配置js
+                placeholder: "请在这里写下您的内容",
+                toolbar: [
+                    ['operate', ['undo', 'redo']],
+                    ['magic', ['style']],
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['para', ['height', 'fontsize', 'ul', 'ol', 'paragraph']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['color', ['color']],
+                    ['insert', ['picture', 'video', 'link', 'table', 'hr']],
+                    ['layout', ['fullscreen', 'codeview']],
+                ],//配置工具栏
+                //查看更多配置(https://summernote.org/deep-dive/)
+                //下面重写上传图片方法
+                //暂时空着
+                callbacks: {
+                    onImageUpload: function (file) {
+                        //图片默认以二进制的形式存储到数据库，调用此方法将请求后台将图片存储到服务器，返回图片请求地址到前端
+                        //将图片放入Formdate对象中
+                        var formData = new FormData();
+                        //‘picture’为后台获取的文件名，file[0]是要上传的文件
+                        formData.append("picture", file[0]);
+                        $.ajax({
+                            type: 'post',
+                            url: '{{ url_for('upload_img')}}',
+                            cache: false,
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            dataType: 'text', //请求成功后，后台返回图片访问地址字符串，故此以text格式获取，而不是json格式
+                            success: function (path) {
+                                $("#summernote").summernote('insertImage', path, function ($image) {
+                                    $image.attr('src', path);
+                                });
+                            },
+                            error: function () {
+                                alert("上传失败");
+                            }
+                        });
+                    }
+                }
+
+
+            });
+
+            //提交表单
+            $('#btn').click(function () {
+                var content = $('#summernote').summernote('code'); //取值
+                var title = $('#note-title').val(); //取值
+                var tag = $('#note-tag').val(); //取值
+
+                if (title == '' || tag == '' || content == '<p><br></p>') {
+                    alert("请确认是否全部输入")
+                    return
+                }
+
+                var input = $("<input type='hidden'>");
+                input.attr({"name": "note-content"});
+                input.val(content);
+                $("#form").append(input);
+
+                $("#form").submit();
+
+            });
+
+            // 从数据库取出富文本后 反转义
+            var content = '{{ note.content }}';
+            function HTMLDecode(text) {
+                var temp = document.createElement("div");
+                temp.innerHTML = text;
+                var output = temp.innerText || temp.textContent;
+                temp = null;
+                return output;
+            }
+
+            $('#summernote').summernote('code', HTMLDecode(content))
+
+        });
+    </script>
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <form role="form" action="" method="post" id="form" name="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="note-title" name="note-title" placeholder="请输入标题"
+                               value="{{ note.title }}"/>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="note-tag" name="note-tag" placeholder="标签"
+                               value="{{ note.tags }}"/>
+                    </div>
+                    <textarea id="summernote"></textarea>
+                    <button type="button" class="btn btn-block btn-primary" name="btn" id="btn">提交</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

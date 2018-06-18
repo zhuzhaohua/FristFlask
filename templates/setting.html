@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %} 设置 {% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static',filename = 'css/index.css') }}">
+    <script type="text/javascript">
+    </script>
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+
+                <div class="row clearfix">
+                    <div class="col-md-1 column">
+                    </div>
+                    <div class="col-md-10 column">
+                        {% if notes %}
+                            {% for note in notes %}
+                                <div class="list-group">
+                                    <div class="list-group-item">
+                                        <h4 class="list-group-item-heading">
+                                            <a href="{{ url_for('edit',note_id=note.id) }}"> {{ note.title }}</a>
+                                        </h4>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            暂无笔记
+                        {% endif %}
+                    </div>
+                    <div class="col-md-1 column">
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
