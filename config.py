@@ -6,12 +6,12 @@ DEBUG = True
 
 # Mysql连接信息
 DIALECT = 'mysql'
-DRIVER = 'mysqldb'
-USERNAME = '你的数据库用户'
-PASSWORD = '你的数据库密码'
+DRIVER = 'pymysql'
+USERNAME = '*****'
+PASSWORD = '******'
 HOST = '127.0.0.1'
 PORT = '3306'
-DATABASE = '你的数据库'
+DATABASE = '********'
 # 拼接的数据库链接信息  框架固定格式
 SQLALCHEMY_DATABASE_URI = '{}+{}://{}:{}@{}:{}/{}?charset=utf8'.format(DIALECT, DRIVER, USERNAME,
                                                                        PASSWORD, HOST, PORT, DATABASE)
